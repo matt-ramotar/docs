@@ -1,71 +1,182 @@
 ---
-title: Introduction
-description: "Welcome to the home of your new documentation"
+title: Meet Meeseeks
+description: Meeseeks is a Kotlin Multiplatform library for scheduling and managing background tasks across Android, iOS, web, and desktop. Whether your tasks are simple or complex, for one user or hundreds of millions, Meeseeks can help.
+sidebarTitle: Introduction
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.png"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.png"
-  alt="Hero Dark"
-/>
+## I'm Mr. Meeseeks! Look at me!
 
-## Setting up
+**_Meeseeks_** is a Kotlin Multiplatform library for effortless background task scheduling. Inspired by [Meeseeks](https://rickandmorty.fandom.com/wiki/Mr._Meeseeks)-friendly and cheerful beings motivated to help who are summoned to complete a task and disappear after it's done-it handles everything from simple one-off jobs to complex periodic workflows—so you can focus on building great features instead of wrestling with scheduling code.
 
-The first step to world-class documentation is setting up your editing environments.
+<img src="/images/hero.svg" alt="Hero" />
+
+## Why Meeseeks?
+
+Whether you need to periodically sync data, schedule local notifications, or run computational tasks behind the scenes, Meeseeks provides:
 
 <CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
+
+<Card title="Simplicity" icon="wand-magic-sparkles" iconType="duotone">
+  Summoning a Meeseeks is easy. No more fiddling with complicated job schedulers
+  or manual timers. Drop in a few lines of code, and let Meeseeks do the rest.
+</Card>
+
+<Card title="Reliability" icon="shield-check" iconType="duotone">
+  Backed by
+  [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
+  on Android,
+  [BGTaskScheduler](https://developer.apple.com/documentation/backgroundtasks/bgtaskscheduler)
+  on iOS, and robust concurrency for other platforms. Even if the app closes or
+  the device restarts, your tasks persist.
+</Card>
+
+<Card
+  title="Intelligent Retry Policies"
+  icon="arrows-rotate"
+  iconType="duotone"
+>
+  Because not all tasks are created equal. Choose from exponential backoff,
+  fixed intervals, or custom strategies to ensure your tasks complete
+  successfully.
+</Card>
+
+<Card title="Multiplatform" icon="laptop-mobile" iconType="duotone">
+  Write once, run anywhere. Bring the power of Meeseeks to Android, iOS, web,
+  desktop, and beyond using a single Kotlin codebase.
+</Card>
+
 </CardGroup>
 
-## Make it yours
+## This is a Meeseeks box
 
-Update your docs to your brand and add valuable content for the best user conversion.
+A _[Meeseeks Box](https://rickandmorty.fandom.com/wiki/Mr._Meeseeks_Box)_ lets you summon a Meeseeks to complete a task. Once the Meeseeks completes its task, it disappears. Here's a primer from [Rick](https://rickandmorty.fandom.com/wiki/Rick_Sanchez):
 
-<CardGroup cols={2}>
+<video
+  controls
+  className="w-full aspect-video"
+  src="/videos/summoning.mp4"
+></video>
+
+## Let me show you how it works
+
+With just a few lines, you can register your task types and summon Meeseeks:
+
+<Steps>
+
+<Step title="Initialize Meeseeks">
+
+```kotlin
+Meeseeks.initialize(
+    context,
+    config
+) {
+    register(MeeseeksType.SYNC) { task -> SyncingMeeseeks(task) }
+    register(MeeseeksType.POLL) { task -> PollingMeeseeks(task) }
+  }
+}
+```
+
+</Step>
+
+<Step title="Press the button">
+
+```kotlin
+val meeseeksBox = MeeseeksBox.value
+```
+
+</Step>
+
+<Step title="Make a request">
+
+```kotlin
+val task = Task(
+  MeeseeksType.SYNC,
+  parameters = taskParametersOf {
+    KEY_USER_ID to "RICKC137"
+    KEY_DIMENSION_ID to 137
+    KEY_SYNC_PROTOCOL to SyncProtocol.INTERDIMENSIONAL
+    KEY_COUNCIL_OVERRIDE to true
+    KEY_USER_TAGS toList {"portal-gun-user"}
+  },
+  preconditions = TaskPreconditions(
+    requiresNetwork = true,
+    requiresCharging = false,
+    requiresBatteryNotLow = false
+  ),
+  priority = TaskPriority.HIGH,
+  schedule = TaskSchedule.Periodic(interval = 60.seconds),
+  retryPolicy = TaskRetryPolicy.ExponentialBackoff(initialDelay = 1.seconds, maxRetries = 3)
+)
+
+val meeseeksId = meeseeksBox.summon(task)
+```
+
+</Step>
+
+<Step title="Meeseeks fulfills the request" />
+
+<Step title="And then it stops existing" />
+
+</Steps>
+
+## Next steps
+
+<CardGroup cols={3}>
+<Card title="Intro to Meeseeks" icon="check" iconType="duotone" href="/docs/intro">
+Dive into Meeseeks' core architecture and how it handles tasks behind the scenes. 
+</Card>
+
+<Card title="Quickstart" icon="bolt" iconType="duotone" href="/docs/quickstart">
+  Learn how to get up and running with Meeseeks in just a few minutes.
+</Card>
+
+<Card title="Cookbook" icon="book" iconType="duotone" href="/cookbook/overview"> 
+Browse real-world examples and recipes for common scheduling scenarios. 
+</Card> 
+</CardGroup>
+
+## Built with ❤️ by
+
+<CardGroup cols={3}>
+<div className="block dark:hidden">
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Store"
+    img="/images/store-light.png"
+    href="https://store.mobilenativefoundation.org/"
+    className="block dark:hidden"
   >
-    Customize your docs to your company's colors and brands
+    The solution for working with data in Kotlin. Whether you’re building alone or
+    with a team of thousands, Store can help.
   </Card>
+</div>
+
+<div className="hidden dark:block">
   <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
+    title="Store"
+    img="/images/store-dark.png"
+    href="https://store.mobilenativefoundation.org/">
+
+    The solution for working with data in Kotlin. Whether you’re building alone or
+    with a team of thousands, Store can help.
+
   </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
+</div>
+
+<Card
+  title="Mobile Native Foundation"
+  img="/images/mobile-native-foundation.png"
+  href="https://mobilenativefoundation.org/"
+>
+  Improving engineering for large-scale mobile applications.
+</Card>
+
+<Card
+  title="Kotlin Foundation"
+  img="/images/kotlin-foundation.png"
+  href="https://kotlinfoundation.org/"
+>
+  Protect, promote and advance the development of the Kotlin programming
+  language.
+</Card>
+
 </CardGroup>
