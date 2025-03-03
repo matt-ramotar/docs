@@ -158,8 +158,10 @@ val meeseeksId = meeseeksBox.summon(task)
   </Accordion>
   <Accordion title="How does Meeseeks handle concurrency across platforms?">
     - `Android`: Concurrency is delegated to WorkManager which manages parallel
-    tasks according to OS constraints. - `Native`: Coming soon. - `JS`: Coming
-    soon. - `JVM`: Coming soon.
+    tasks according to OS constraints. 
+    - `Native`: Coming soon. 
+    - `JS`: Coming soon. 
+    - `JVM`: Coming soon.
   </Accordion>
   <Accordion title="  What if I need to cancel or update a task after summoning it?">
     You can call `MeeseeksBox.sendBackToBox(id)` to cancel a task by its
