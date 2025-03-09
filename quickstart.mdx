@@ -44,6 +44,20 @@ implementation "dev.mattramotar.meeseeks:runtime:1.0.0"
 
 </Step>
 
+<Step title = "(iOS Only) Add BGTaskScheduler Identifiers">
+
+In your `Info.plist` file, add the following:
+
+```xml
+<key>BGTaskSchedulerPermittedIdentifiers</key>
+<array>
+  <string>dev.mattramotar.meeseeks.periodic.task</string>
+  <string>dev.mattramotar.meeseeks.onetime.task</string>
+</array>
+```
+
+</Step>
+
 <Step title="Initialize Meeseeks">
 
 <CodeGroup>
@@ -71,8 +85,34 @@ class MyApp : Application(), MeeseeksContext {
 }
 ```
 
-```swift iOS
-// Coming soon
+```swift Native (iOS)
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate, MeeseeksContext {
+  func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    let config = MeeseeksBoxConfig(
+      maxParallelTasks = 2,
+      backoffMinimumMillis = 10_000
+    )
+
+    Meeseeks.companion.initialize(
+      context: self,
+      config: config
+    ) {
+
+      $0.registerFactory(type: "SYNC") { task in
+        SyncingMeeseeks(task: task)
+      }
+      $0.registerFactory(type: "POLL") { task in
+        PollingMeeseeks(task: task)
+      }
+    }
+
+    return true
+  }
+}
 ```
 
 ```js Web
@@ -154,12 +194,12 @@ val meeseeksId = meeseeksBox.summon(task)
     `WorkManager` (which Meeseeks uses under the hood) automatically
     re-schedules tasks after a reboot if you configure it to do so. On other
     platforms, tasks will be re-scheduled the next time your application starts
-    and re-initializes Meeseeks.
+    and re-initializes Meeseeks. On iOS, tasks are re-scheduled with `BGTaskScheduler` the next time your application launches and re-initializes Meeseeks.
   </Accordion>
   <Accordion title="How does Meeseeks handle concurrency across platforms?">
     - `Android`: Concurrency is delegated to WorkManager which manages parallel
     tasks according to OS constraints. 
-    - `Native`: Coming soon. 
+    - `Native (iOS)`: Uses `BGTaskScheduler` for periodic and one-time tasks. Tasks are canceled or updated locally in the DB, and on iOS 16+ can be canceled programmatically via `cancelTaskRequestWithIdentifier`.
     - `JS`: Coming soon. 
     - `JVM`: Coming soon.
   </Accordion>
@@ -181,6 +221,8 @@ Tasks specify a `TaskSchedule`, which can be:
       - `TaskSchedule.Periodic`
 
 On Android, `PeriodicWorkRequests` are used under the hood.
+
+On iOS, `BGAppRefreshTaskRequest` and `BGProcessingTaskRequest` are used under the hood.
 
   </Accordion>
 
