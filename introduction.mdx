@@ -1,6 +1,6 @@
 ---
 title: Meet Meeseeks
-description: Meeseeks is a Kotlin Multiplatform library for scheduling and managing background tasks across Android, iOS, web, and desktop. Whether your tasks are simple or complex, for one user or hundreds of millions, Meeseeks can help.
+description: Meeseeks is a Kotlin Multiplatform library for scheduling and managing background tasks across Android, JVM, native (iOS), and JS (Web). Whether your tasks are simple or complex, for one user or hundreds of millions, Meeseeks can help.
 sidebarTitle: Introduction
 ---
 
@@ -24,10 +24,7 @@ Whether you need to periodically sync data, schedule local notifications, or run
 <Card title="Reliability" icon="shield-check" iconType="duotone">
   Backed by
   [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
-  on Android,
-  [BGTaskScheduler](https://developer.apple.com/documentation/backgroundtasks/bgtaskscheduler)
-  on iOS, and robust concurrency for other platforms. Even if the app closes or
-  the device restarts, your tasks persist.
+  on Android, [Quartz Job Scheduling](https://www.quartz-scheduler.org/) on JVM, [BGTaskScheduler](https://developer.apple.com/documentation/backgroundtasks/bgtaskscheduler) on native (iOS), and [Background Synchronization API](https://developer.mozilla.org/en-US/docs/Web/API/Background_Synchronization_API) on JS (Web). Even if the app closes or the device restarts, your tasks persist.
 </Card>
 
 <Card

@@ -85,6 +85,28 @@ class MyApp : Application(), MeeseeksContext {
 }
 ```
 
+```java JVM
+public class Main implements MeeseeksContext {
+  public static void main(String[] args) {
+    MeeseeksBoxConfig config = new MeeseeksBoxConfig(
+        2,      // maxParallelTasks
+        false,   // allowExpedited
+        3,      // maxRetryCount
+        10000   // backoffMinimumMillis
+    );
+
+    Meeseeks.initialize(
+        new Main(),
+        config,
+        registryBuilder -> {
+            registryBuilder.registerFactory(MeeseeksType.SYNC, task -> new SyncingMeeseeks(task));
+            registryBuilder.registerFactory(MeeseeksType.POLL, task -> new PollingMeeseeks(task));
+        }
+    );
+  }
+}
+```
+
 ```swift Native (iOS)
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, MeeseeksContext {
@@ -115,12 +137,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MeeseeksContext {
 }
 ```
 
-```js Web
-// Coming soon
-```
+```kotlin JS (Web)
+import dev.mattramotar.meeseeks.runtime.*
+import dev.mattramotar.meeseeks.runtime.dsl.registry.MeeseeksRegistryBuilderExtensions.register
+import kotlinx.browser.window
+import kotlin.js.Date
 
-```java Desktop
-// Coming soon
+object BrowserContext : MeeseeksContext
+
+fun main() {
+    val config = MeeseeksBoxConfig(
+        maxParallelTasks = 2,
+        backoffMinimumMillis = 10000
+    )
+
+    Meeseeks.initialize(
+        context = BrowserContext,
+        config = config
+    ) {
+      register(MeeseeksType.SYNC) { task -> SyncingMeeseeks(task) }
+      register(MeeseeksType.POLL) { task -> PollingMeeseeks(task) }
+    }
+}
 ```
 
 </CodeGroup>
@@ -184,24 +222,25 @@ val meeseeksId = meeseeksBox.summon(task)
 <AccordionGroup>
   <Accordion title="How does Meeseeks store and persist tasks?">
     Meeseeks uses a local SQLDelight database to store all task data (including
-    parameters, schedule, status, logs). Each platform (Android, JVM, JS,
-    native) has a driver for that database, so your tasks are persisted across
+    parameters, schedule, status, logs). Each platform has a driver for that database, so your tasks are persisted across
     app restarts or process deaths.
   </Accordion>
   <Accordion title="What happens to tasks if my app is force-closed or the device reboots?">
     Because tasks and their metadata live in a local database, Meeseeks can
-    reconstruct and re-schedule them when your app restarts. On Android,
-    `WorkManager` (which Meeseeks uses under the hood) automatically
-    re-schedules tasks after a reboot if you configure it to do so. On other
-    platforms, tasks will be re-scheduled the next time your application starts
-    and re-initializes Meeseeks. On iOS, tasks are re-scheduled with `BGTaskScheduler` the next time your application launches and re-initializes Meeseeks.
+    reconstruct and re-schedule them when your app restarts. 
+    - `Android`: `WorkManager` automatically
+    re-schedules tasks after a reboot if you configure it to do so. 
+    - `JVM`: Tasks are re-scheduled with `Quartz` the next time your application launches and re-initializes Meeseeks.
+    - `Native (iOS)`: Tasks are re-scheduled with `BGTaskScheduler` the next time your application launches and re-initializes Meeseeks.
+    - `JS (Web)`: If you used `SyncManager` or `PeriodicSyncManager`, the browser may continue to run tasks via the `ServiceWorker` in the background (user permissions and browser support permitting). Otherwise, tasks do not continue to run after the page is closed, but will be re-scheduled when the page is opened again.
   </Accordion>
   <Accordion title="How does Meeseeks handle concurrency across platforms?">
-    - `Android`: Concurrency is delegated to WorkManager which manages parallel
+    - `Android`: Concurrency is delegated to `WorkManager` which manages parallel
     tasks according to OS constraints. 
+    - `JVM`: Concurrency is similarly delegated to `Quartz`.
     - `Native (iOS)`: Uses `BGTaskScheduler` for periodic and one-time tasks. Tasks are canceled or updated locally in the DB, and on iOS 16+ can be canceled programmatically via `cancelTaskRequestWithIdentifier`.
-    - `JS`: Coming soon. 
-    - `JVM`: Coming soon.
+    - `JS (Web)`: Uses `ServiceWorker` `sync`/`periodicsync` if available, otherwise in-memory timers. 
+
   </Accordion>
   <Accordion title="  What if I need to cancel or update a task after summoning it?">
     You can call `MeeseeksBox.sendBackToBox(id)` to cancel a task by its
