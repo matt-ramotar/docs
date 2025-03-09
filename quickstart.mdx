@@ -93,19 +93,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MeeseeksContext {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     let config = MeeseeksBoxConfig(
-      maxParallelTasks = 2,
-      backoffMinimumMillis = 10_000
+      maxParallelTasks: 2,
+      backoffMinimumMillis: 10000
     )
 
     Meeseeks.companion.initialize(
       context: self,
       config: config
-    ) {
+    ) { registry in
 
-      $0.registerFactory(type: "SYNC") { task in
+      registry.registerFactory(type: MeeseeksType.SYNC) { task in
         SyncingMeeseeks(task: task)
       }
-      $0.registerFactory(type: "POLL") { task in
+      registry.registerFactory(type: MeeseeksType.POLL) { task in
         PollingMeeseeks(task: task)
       }
     }
