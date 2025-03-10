@@ -394,8 +394,12 @@ On Android, `PeriodicWorkRequests` are used under the hood. On iOS, `BGAppRefres
     
     Conceptually, you can visualize these transitions:
 
-    <div style={{width: '50%'}}>
-      <img src="./images/taskstatus_transitions.svg" />
+    <div className="block dark:hidden" style={{width: '75%'}}>  
+      <img src="./images/taskstatus-transitions-light.svg" />
+    </div>
+
+    <div className="hidden dark:block" style={{width: '75%'}}>  
+      <img src="./images/taskstatus-transitions-dark.svg" />
     </div>
 
     If a task is canceled via `MeeseeksBox.sendBackToBox`, it transitions to `Finished.Cancelled`. For tasks that fail with a transient error (e.g., network unavailable), the status simply goes back to `Pending` until the next run attempt.
