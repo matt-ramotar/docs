@@ -1,7 +1,16 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Meeseeks Documentation",
+  "name": "Meeseeks Docs",
+  "seo": {
+    "metatags": {
+      "og:site_name": "Meeseeks Docs",
+      "og:title": "Meet Meeseeks",
+      "og:description": "Meeseeks is a Kotlin Multiplatform library for scheduling and managing background tasks across Android, JVM, native (iOS), and JS (Web). Whether your tasks are simple or complex, for one user or hundreds of millions, Meeseeks can help.",
+      "og:image": "https://i.imgur.com/WiqqFOG.png",
+      "og:logo": "https://i.imgur.com/WiqqFOG.png"
+    }
+  },
 
   "colors": {
     "primary": "#43c8fe",
