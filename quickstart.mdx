@@ -44,7 +44,7 @@ implementation "dev.mattramotar.meeseeks:runtime:1.0.0"
 
 </Step>
 
-<Step title = "(iOS Only) Add BGTaskScheduler Identifiers">
+<Step title = "(iOS Only) Register BGTaskScheduler Identifiers">
 
 In your `Info.plist` file, add the following:
 
@@ -132,6 +132,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, MeeseeksContext {
       }
     }
 
+    BGTaskScheduler.shared.register(
+      forTaskWithIdentifier: "dev.mattramotar.meeseeks.periodic.task", 
+      using: nil
+    ) { identifier in
+      MeeseeksBGTaskRunner.run(bgTaskIdentifier: identifier, taskSchedule: TaskSchedule.Periodic())
+    }
+
+    BGTaskScheduler.shared.register(
+      forTaskWithIdentifier: "dev.mattramotar.meeseeks.onetime.task", 
+      using: nil
+    ) { identifier in
+      MeeseeksBGTaskRunner.run(bgTaskIdentifier: identifier, taskSchedule: TaskSchedule.OneTime())
+    }
+
     return true
   }
 }
@@ -158,10 +172,47 @@ fun main() {
       register(MeeseeksType.SYNC) { task -> SyncingMeeseeks(task) }
       register(MeeseeksType.POLL) { task -> PollingMeeseeks(task) }
     }
+
+    if (js("('serviceWorker' in navigator)") as Boolean) {
+    window.navigator.serviceWorker
+        .register("/service-worker.js")
+        .then { console.log("Service Worker registered!") }
+        .catch { err -> console.warn("SW registration failed: ${err}") }
+    }
 }
 ```
 
 </CodeGroup>
+</Step>
+
+<Step title="(JS Only) Service Worker Setup">
+
+If your browser supports [Background Sync](https://developer.mozilla.org/en-US/docs/Web/API/Background_Sync_API) or [Periodic Background Sync](https://developer.mozilla.org/en-US/docs/Web/API/Web_Periodic_Background_Synchronization_API), you can handle tasks even when the tab isn't active.
+
+Example `service-worker.js`:
+
+```js
+self.addEventListener('sync', event => {
+  if (event.tag && event.tag.startsWith("meeseeks-")) {
+    event.waitUntil(handleSync(event.tag));
+  }
+});
+
+self.addEventListener('periodicsync', event => {
+  if (event.tag && event.tag.startsWith("meeseeks-")) {
+    event.waitUntil(handleSync(event.tag));
+  }
+});
+
+async function handleSync(tag) {
+  if (self.MeeseeksBGTaskRunner && self.MeeseeksBGTaskRunner.run) {
+    await self.MeeseeksBGTaskRunner.run(tag);
+  }
+};
+```
+
+<Alert> If a browser doesn't support service workers or background sync, Meeseeks falls back to in-memory scheduling that runs only while the page is open.</Alert> 
+
 </Step>
 
 <Step title="Get the Meeseeks box">
