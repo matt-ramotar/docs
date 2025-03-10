@@ -301,18 +301,18 @@ val meeseeksId = meeseeksBox.summon(task)
     summon a new Meeseeks with the updated `Task`.
   </Accordion>
   <Accordion title="How do I track the status of a task?">
-    Not currently supported but coming soon.
-  </Accordion>
+    Meeseeks provides APIs to query a task's current status at any time:
+    - `MeeseeksBox.getStatus(taskId)` returns the `TaskStatus` of a single task, or `null` if that task does not exist.
+    - `MeeseeksBox.getAllTasks()` returns a list of `ScheduledTask` objects, each containing the task’s `MrMeeseeksId`, `TaskStatus`, and other metadata (like run attempt count).
+    - `MeeseeksBox.watchStatus(taskId)` provides a reactive stream of `TaskStatus` changes.
+  </Accordion> 
 
   <Accordion title="How does Meeseeks handle different scheduling intervals?">
-    
 Tasks specify a `TaskSchedule`, which can be: 
       - `TaskSchedule.OneTime`
       - `TaskSchedule.Periodic`
 
-On Android, `PeriodicWorkRequests` are used under the hood.
-
-On iOS, `BGAppRefreshTaskRequest` and `BGProcessingTaskRequest` are used under the hood.
+On Android, `PeriodicWorkRequests` are used under the hood. On iOS, `BGAppRefreshTaskRequest` and `BGProcessingTaskRequest` are used under the hood.
 
   </Accordion>
 
