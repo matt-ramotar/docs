@@ -394,14 +394,14 @@ On Android, `PeriodicWorkRequests` are used under the hood. On iOS, `BGAppRefres
     
     Conceptually, you can visualize these transitions:
 
-    ```mermaid
-    flowchart TB
-        P[Pending] --> R(Running)
-        R -->|Success| C(Completed)
-        R -->|Permanent Failure| F(Failed)
-        R -->|Cancel| X(Cancelled)
-        R -->|Retry or Transient Failure| P
-    ```
+```mermaid
+flowchart 
+    P[Pending] --> R(Running)
+    R -->|Success| C(Completed)
+    R -->|Permanent Failure| F(Failed)
+    R -->|Cancel| X(Cancelled)
+    R -->|Retry or Transient Failure| P
+```
 
     If a task is canceled via `MeeseeksBox.sendBackToBox`, it transitions to `Finished.Cancelled`. For tasks that fail with a transient error (e.g., network unavailable), the status simply goes back to `Pending` until the next run attempt.
   </Accordion>
