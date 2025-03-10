@@ -378,6 +378,33 @@ On iOS, `BGAppRefreshTaskRequest` and `BGProcessingTaskRequest` are used under t
     code from your iOS target. The library only orchestrates scheduling and
     persistence. What the `MrMeeseeks` does inside `execute()` is up to you.
   </Accordion>
+  <Accordion title="How do TaskStatus state transitions work?">
+    Meeseeks uses `TaskStatus` to represent the lifecycle of tasks:
+    - **Pending**: The task is scheduled but not currently running. 
+    - **Running**: The task is actively executing.
+    - **Finished**: A terminal state indicating no further runs. It may be:
+      - **Completed** (successful) 
+      - **Cancelled** (manually cancelled or platform removed it) 
+      - **Failed** (permanently failed)
+
+    When a task runs, if it returns:
+    - `TaskResult.Success`: Meeseeks sets the task status to `Finished.Completed`.
+    - `TaskResult.Retry` or `TaskResult.Failure.Transient`: Meeseeks reverts the task status to `Pending` so that it can be retried later (respecting any backoff or retry policy).
+    - `TaskResult.Failure.Permanent`: Meeseeks sets the task status to `Finished.Failed`, meaning no more attempts will be scheduled.
+    
+    Conceptually, you can visualize these transitions:
+
+    ```mermaid
+    flowchart TB
+        P[Pending] --> R(Running)
+        R -->|Success| C(Completed)
+        R -->|Permanent Failure| F(Failed)
+        R -->|Cancel| X(Cancelled)
+        R -->|Retry or Transient Failure| P
+    ```
+
+    If a task is canceled via `MeeseeksBox.sendBackToBox`, it transitions to `Finished.Cancelled`. For tasks that fail with a transient error (e.g., network unavailable), the status simply goes back to `Pending` until the next run attempt.
+  </Accordion>
 </AccordionGroup>
 
 ## Next steps
